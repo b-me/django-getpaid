@@ -79,7 +79,7 @@ class FallbackView(RedirectView):
                         url_name, kwargs={'pk': self.payment.id})
             else:
                 url_name = getattr(
-                    settings, 'GETPAID_CUSTOM_PAYMENTFAILURE_URL_NAME', None)
+                    settings, 'GETPAID_CUSTOM_PAYMENT_FAILURE_URL_NAME', None)
                 if url_name is not None:
                     return reverse(
                         url_name, kwargs={'pk': self.payment.id})
