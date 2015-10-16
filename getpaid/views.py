@@ -58,13 +58,29 @@ class FallbackView(RedirectView):
 
     def get_redirect_url(self, **kwargs):
         self.payment = get_object_or_404(Payment, pk=self.kwargs['pk'])
-
-        if self.success:
-            url_name = getattr(settings, 'GETPAID_SUCCESS_URL_NAME', None)
-            if url_name is not None:
-                return reverse(url_name, kwargs={'pk': self.payment.order_id})
+        if self.payment.order:
+            if self.success:
+                url_name = getattr(settings, 'GETPAID_SUCCESS_URL_NAME', None)
+                if url_name is not None:
+                    return reverse(
+                        url_name, kwargs={'pk': self.payment.order_id})
+            else:
+                url_name = getattr(settings, 'GETPAID_FAILURE_URL_NAME', None)
+                if url_name is not None:
+                    return reverse(
+                        url_name, kwargs={'pk': self.payment.order_id})
+            return self.payment.order.get_absolute_url()
         else:
-            url_name = getattr(settings, 'GETPAID_FAILURE_URL_NAME', None)
-            if url_name is not None:
-                return reverse(url_name, kwargs={'pk': self.payment.order_id})
-        return self.payment.order.get_absolute_url()
+            if self.success:
+                url_name = getattr(
+                    settings, 'GETPAID_CUSTOM_PAYMENT_SUCCESS_URL_NAME', None)
+                if url_name is not None:
+                    return reverse(
+                        url_name, kwargs={'pk': self.payment.id})
+            else:
+                url_name = getattr(
+                    settings, 'GETPAID_CUSTOM_PAYMENTFAILURE_URL_NAME', None)
+                if url_name is not None:
+                    return reverse(
+                        url_name, kwargs={'pk': self.payment.id})
+        raise Http404

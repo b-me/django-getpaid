@@ -42,6 +42,9 @@ class SuccessView(DetailView):
     """
     model = Payment
 
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
+
     def render_to_response(self, context, **response_kwargs):
         return HttpResponseRedirect(reverse('getpaid-success-fallback', kwargs={'pk': self.object.pk}))
 
@@ -51,6 +54,9 @@ class FailureView(DetailView):
     This view just redirects to standard backend failure link.
     """
     model = Payment
+
+    def post(self, *args, **kwargs):
+        return self.get(*args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
         return HttpResponseRedirect(reverse('getpaid-failure-fallback', kwargs={'pk': self.object.pk}))
